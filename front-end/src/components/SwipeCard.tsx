@@ -1,48 +1,55 @@
 'use client';
 
-import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useEffect } from 'react';
+import { useState } from 'react';
+import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
+import { Profile } from '@/app/context/MatchContext';
+import StudyMatchCard from '@/components/StudyMatchCard';
 
-export default function SwipeCard({ profile, onSwipe }: {
-  profile: any,
-  onSwipe: (direction: 'left' | 'right') => void
-}) {
+type SwipeCardProps = {
+  profile: Profile;
+  onSwipe: (direction: 'left' | 'right') => void;
+};
+
+export default function SwipeCard({ profile, onSwipe }: SwipeCardProps) {
+  const [hasSwiped, setHasSwiped] = useState(false);
+
+  // Motion value that tracks drag X position
   const x = useMotionValue(0);
-  const rotate = useTransform(x, [-200, 200], [-20, 20]);
 
-  useEffect(() => {
-    const unsubscribe = x.on('change', (latest) => {
-      if (latest > 200) {
-        onSwipe('right');
-      } else if (latest < -200) {
-        onSwipe('left');
-      }
-    });
-    return () => unsubscribe();
-  }, [x, onSwipe]);
+  // Rotate slightly as we drag left/right
+  const rotate = useTransform(x, [-200, 200], [-15, 15]);
+
+  const handleDragEnd = (_: any, info: PanInfo) => {
+    if (hasSwiped) return;
+
+    const offset = info.offset.x;
+    const velocity = info.velocity.x;
+    const swipePower = Math.abs(offset) * velocity;
+    const threshold = 8000;
+
+    if (swipePower > threshold) {
+      setHasSwiped(true);
+      onSwipe('right');
+    } else if (swipePower < -threshold) {
+      setHasSwiped(true);
+      onSwipe('left');
+    }
+  };
 
   return (
     <motion.div
-      className="absolute w-full flex justify-center"
+      className="cursor-grab active:cursor-grabbing select-none"
       drag="x"
-      style={{ x, rotate }}
       dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.8}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      dragElastic={1}
+      style={{ x, rotate }} // 👈 rotation and x are bound to motion
+      onDragEnd={handleDragEnd}
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ opacity: 0, y: -50 }}
+      transition={{ duration: 0.25 }}
     >
-      <Card className="w-80 shadow-xl bg-white border rounded-2xl">
-        <CardHeader>
-          <CardTitle className="text-center text-xl">
-            {profile.name}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-center space-y-2">
-          <p className="text-gray-600">🎓 Role: {profile.role}</p>
-          <p className="text-gray-600">📚 Subjects: {profile.subjects.join(', ')}</p>
-          <p className="text-gray-600">🕒 Availability: {profile.availability}</p>
-        </CardContent>
-      </Card>
+      <StudyMatchCard candidate={profile} />
     </motion.div>
   );
 }

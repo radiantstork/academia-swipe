@@ -6,43 +6,6 @@ import { User, Star, Globe, Zap, Target, BookOpen, X, Heart, MessageSquare } fro
 // FIX 2: List of unique anonymous names
 const ANONYMOUS_NAMES = ["Anonymous Duck", "Anonymous Elephant", "Anonymous Giraffe", "Anonymous Hippo", "Anonymous Llama"];
 
-// --- MOCK DATA (Changed to include a rating) ---
-const initialCandidates = [
-  {
-    id: 1,
-    age: 23,
-    profession: 'Graduate Student (CS)',
-    focusArea: 'Research Paper',
-    interests: ['Machine Learning', 'Computational Linguistics', 'Rust', 'Distributed Systems'],
-    achievements: ['Published at ACL 2024 (Minor Author)', '4.0 GPA (Current)', 'Open Source Contributor'],
-    languages: ['English (Native)', 'Mandarin (Intermediate)'],
-    collaborationGoal: 'Seeking a partner to co-write a survey paper on causality in LLMs.',
-    rating: 4.8 // NEW RATING PROPERTY
-  },
-  {
-    id: 2,
-    age: 45,
-    profession: 'Research Professor (Physics)',
-    focusArea: 'Mentorship',
-    interests: ['Quantum Computing', 'Condensed Matter', 'Tensor Networks', 'Statistical Mechanics'],
-    achievements: ['PhD from MIT', 'H-Index: 35', 'Fellow of the APS'],
-    languages: ['English', 'German'],
-    collaborationGoal: 'Open to mentoring driven undergraduates on fundamental concepts in QM and Field Theory.',
-    rating: 5.0 // NEW RATING PROPERTY
-  },
-  {
-    id: 3,
-    age: 20,
-    profession: 'Undergraduate (Philosophy)',
-    focusArea: 'Skill Building',
-    interests: ['Existentialism', 'Logic', 'Ethics', 'Cognitive Science'],
-    achievements: ['Dean\'s List (3 Semesters)', 'Regional Debate Finalist'],
-    languages: ['French (Native)', 'English (Fluent)', 'Latin (Reading)'],
-    collaborationGoal: 'Looking for study partners for weekly logic problem sets.',
-    rating: 3.5 // NEW RATING PROPERTY
-  }
-];
-
 // --- UTILITY COMPONENTS ---
 
 const CardHeader = ({ Icon, title }) => (
@@ -102,8 +65,8 @@ const StarRating = ({ rating }) => {
 
 const StudyMatchCard = ({ candidate }) => {
   // Destructure the new rating property
-  const { id, age, profession, focusArea, interests, achievements, languages, collaborationGoal, rating } = candidate;
-  const profileTitle = ANONYMOUS_NAMES[(id - 1) % ANONYMOUS_NAMES.length]; 
+  const { age, profession, focusArea, interests, achievements, languages, collaborationGoal, rating } = candidate;
+  const profileTitle = ANONYMOUS_NAMES[Math.random() * ANONYMOUS_NAMES.length];
 
   return (
     // FLASHY BORDER EDIT: Removed Tailwind border/ring classes and added a custom `neon-border-flash` class.
@@ -196,7 +159,7 @@ const StudyMatchCard = ({ candidate }) => {
 
 // --- APP WRAPPER & SWIPE LOGIC ---
 const MatchSwipeApp = () => {
-  const [candidates, setCandidates] = useState(initialCandidates);
+  const [candidates, setCandidates] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feedback, setFeedback] = useState(null); // 'like' or 'pass'
 
@@ -292,4 +255,4 @@ const MatchSwipeApp = () => {
   );
 };
 
-export default MatchSwipeApp;
+export default StudyMatchCard;

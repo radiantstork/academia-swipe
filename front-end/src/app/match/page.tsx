@@ -46,11 +46,11 @@ export default function MatchPage() {
 
   const handleSwipe = (direction: 'left' | 'right') => {
     console.log('function call')
-  if (!filteredProfiles[currentIndex]) return;
+    if (!filteredProfiles[currentIndex]) return;
 
-  console.log(`Swiped ${direction} on ${filteredProfiles[currentIndex].name}`);
-  setCurrentIndex((prev) => prev + 1);
-};
+    console.log(`Swiped ${direction} on ${filteredProfiles[currentIndex].name}`);
+    setCurrentIndex((prev) => prev + 1);
+  };
 
   return (
     <main className="min-h-screen bg-gray-50 relative overflow-hidden">
