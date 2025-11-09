@@ -13,9 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 import './globals.css';
+
 import { MatchFormProvider } from './context/MatchFormContext';
 import { ChatProvider } from './context/ChatContext';
 import { MatchProvider } from './context/MatchContext';
+import { ProfileProvider } from './context/ProfileContext';
+import { UserProvider } from './context/UserContext';
 import Navbar from '@/components/Navbar';
 
 export const metadata: Metadata = {
@@ -27,14 +30,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="bg-gray-50">
-        <MatchFormProvider>
-          <MatchProvider>
-            <ChatProvider>
-              <Navbar />
-              {children}
-            </ChatProvider>
-          </MatchProvider>
-        </MatchFormProvider>
+        <UserProvider>
+          <ProfileProvider>
+            <MatchFormProvider>
+              <MatchProvider>
+                <ChatProvider>
+                  <Navbar />
+                  {children}
+                </ChatProvider>
+              </MatchProvider>
+            </MatchFormProvider>
+          </ProfileProvider>
+        </UserProvider>
       </body>
     </html>
   );

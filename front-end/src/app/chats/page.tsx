@@ -1,19 +1,24 @@
 'use client';
 
-import ChatListItem from '@/components/ChatListItem';
-import { useChat } from '@/app/context/ChatContext';
+import { useChats } from '@/app/context/ChatContext';
+import { Link } from 'lucide-react';
 
 export default function ChatsPage() {
-  const { chats } = useChat();
+  const { chats } = useChats();
+
+  console.log(chats);
+  
 
   return (
-    <main className="min-h-screen p-4 flex flex-col items-center bg-gray-50">
-      <h1 className="text-2xl font-bold mb-4">💬 Your Chats</h1>
-      <div className="flex flex-col gap-3 w-full max-w-md">
-        {chats.map((chat) => (
-          <ChatListItem key={chat.id} chat={chat} />
-        ))}
-      </div>
-    </main>
+    <div>
+      {chats.map((chat) => (
+        <a key={chat.id} href={`/chats/${chat.id}`}>
+          <div className="p-4 border-b hover:bg-gray-50 cursor-pointer">
+            <p className="font-semibold">{chat.participants[1]?.name}</p>
+            <p className="text-sm text-gray-500 truncate">{chat.messages.at(-1)?.text}</p>
+          </div>
+        </a>
+      ))}
+    </div>
   );
 }

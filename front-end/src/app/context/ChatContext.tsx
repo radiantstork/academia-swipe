@@ -1,23 +1,25 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { Profile } from '@/app/context/MatchContext';
 
 export type Message = {
   id: string;
-  sender: string; // 'me' or other user
+  sender: string; // name or id
   text: string;
-  timestamp: string;
+  timestamp: Date;
 };
 
 export type Chat = {
   id: string;
-  name: string; // chat participant
+  participants: Profile[];
   messages: Message[];
 };
 
 type ChatContextType = {
   chats: Chat[];
-  addMessage: (chatId: string, message: Omit<Message, 'id'>) => void;
+  createChat: (participants: Profile[], chatId: string) => Chat;
+  addMessage: (chatId: string, message: Message) => void;
 };
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -26,55 +28,51 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [chats, setChats] = useState<Chat[]>([
     {
       id: '1',
-      name: 'Alice',
-      messages: [
-        { id: 'm1', sender: 'Alice', text: 'Hey! How’s studying going?', timestamp: '10:45 AM' },
-        { id: 'm2', sender: 'me', text: 'Pretty good! Working on math problems.', timestamp: '10:46 AM' },
-        { id: 'm3', sender: 'Alice', text: 'Awesome! Need help with any topic?', timestamp: '10:47 AM' },
+      participants: [
+        { id: 'self', name: 'You', role: 'student', subjects: [], branches: {}, availability: '' },
+        { id: '2', name: 'Bob', role: 'teacher', subjects: ['Physics'], branches: {}, availability: 'Weekends' },
       ],
-    },
-    {
-      id: '2',
-      name: 'Bob',
       messages: [
-        { id: 'm4', sender: 'Bob', text: 'Did you review the last lecture?', timestamp: 'Yesterday' },
-        { id: 'm5', sender: 'me', text: 'Yes, just finished!', timestamp: 'Yesterday' },
-      ],
-    },
-    {
-      id: '3',
-      name: 'Charlie',
-      messages: [
-        { id: 'm6', sender: 'Charlie', text: 'Ready for the study session tomorrow?', timestamp: '2 days ago' },
+        { id: 'm1', sender: 'Bob', text: 'Hey! Looking forward to our study session.', timestamp: new Date() },
+        { id: 'm2', sender: 'You', text: 'Same here! Let’s plan it for tomorrow.', timestamp: new Date() },
       ],
     },
   ]);
 
-  const addMessage = (chatId: string, message: Omit<Message, 'id'>) => {
+  const createChat = (participants: Profile[], chatId: string): Chat => {
+    const newChat: Chat = {
+      id: chatId,
+      participants,
+      messages: [
+        {
+          id: 'welcome',
+          sender: participants[1]?.name || 'Match',
+          text: `Hi ${participants[0]?.name || 'there'}! Excited to collaborate?`,
+          timestamp: new Date(),
+        },
+      ],
+    };
+    setChats((prev) => [...prev, newChat]);
+    return newChat;
+  };
+
+  const addMessage = (chatId: string, message: Message) => {
     setChats((prev) =>
       prev.map((chat) =>
-        chat.id === chatId
-          ? {
-              ...chat,
-              messages: [
-                ...chat.messages,
-                { id: `m${Date.now()}`, ...message },
-              ],
-            }
-          : chat
+        chat.id === chatId ? { ...chat, messages: [...chat.messages, message] } : chat
       )
     );
   };
 
   return (
-    <ChatContext.Provider value={{ chats, addMessage }}>
+    <ChatContext.Provider value={{ chats, createChat, addMessage }}>
       {children}
     </ChatContext.Provider>
   );
 }
 
-export function useChat() {
+export function useChats() {
   const context = useContext(ChatContext);
-  if (!context) throw new Error('useChat must be used within ChatProvider');
+  if (!context) throw new Error('useChats must be used within ChatProvider');
   return context;
 }

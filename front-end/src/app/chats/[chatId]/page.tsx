@@ -4,14 +4,16 @@ import { useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import ChatMessage from '@/components/ChatMessage';
 import ChatInput from '@/components/ChatInput';
-import { useChat } from '@/app/context/ChatContext';
+import { useChats } from '@/app/context/ChatContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { useUser } from '@/app/context/UserContext';
 
 export default function ChatRoomPage() {
   const { chatId } = useParams() as { chatId: string };
   const router = useRouter();
-  const { chats, addMessage } = useChat();
+  const { chats, addMessage } = useChats();
+  const { user } = useUser();
 
   const chat = chats.find((c) => c.id === chatId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -24,7 +26,7 @@ export default function ChatRoomPage() {
   if (!chat) return <div className="p-4">Chat not found</div>;
 
   const handleSend = (text: string) => {
-    addMessage(chatId, { sender: 'me', text, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+    addMessage(chatId, { id: user?.id || "", sender: 'me', text, timestamp: new Date() });
   };
 
   return (
@@ -34,7 +36,7 @@ export default function ChatRoomPage() {
         <Button variant="ghost" onClick={() => router.push('/chats')}>
           ← Back
         </Button>
-        <h2 className="font-semibold text-gray-800">{chat.name}</h2>
+        <h2 className="font-semibold text-gray-800">{chat.participants[1].name}</h2>
         <div className="w-10"></div>
       </div>
 

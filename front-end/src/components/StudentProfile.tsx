@@ -7,7 +7,7 @@ import {
   Timer, Briefcase, Award, Star // <-- New icons for teaching section
 } from 'lucide-react';
 import "../app/globals.css"; // Assuming this path is correct for your project
-import { useProfile } from '../context/ProfileContext'; // <-- IMPORT YOUR HOOK
+import { useProfile } from '../app/context/ProfileContext'; // <-- IMPORT YOUR HOOK
 
 // Constants and Styles for the component
 const SUBJECT_SUGGESTIONS = [
