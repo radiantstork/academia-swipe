@@ -1,4 +1,6 @@
 // fileName: ChatWindow.jsx (FINAL COMPLETE CODE)
+import { useUser } from '@/app/context/UserContext';
+import { getChattingUser } from '@/lib/utils';
 import React, { useState, useEffect, useRef } from 'react';
 
 // --- MOCK DATA ---
@@ -7,7 +9,7 @@ const mockCurrentUserName = 'You';
 /**
  * The only mock object needed for internal state typing
  */
-const mockMessageExample = { id: 0, user: 'System', text: 'Initializing...', timestamp: '0:00 AM' };
+const mockMessageExample = { id: 0, sender: 'System', text: 'Initializing...', timestamp: '0:00 AM' };
 
 
 /**
@@ -42,7 +44,7 @@ const MessageBubble = ({ message, isCurrentUser }) => {
     <div className={`flex ${alignClass} mb-4`}>
       <div className={`max-w-xs md:max-w-md lg:max-w-lg`}>
         {!isCurrentUser && (
-            <p className={`text-xs ${nameColorClass} font-mono font-semibold mb-1`}>&gt; {message.user}</p>
+            <p className={`text-xs ${nameColorClass} font-mono font-semibold mb-1`}>&gt; {message.sender}</p>
         )}
         
         <div className={`p-3 rounded-xl shadow transition duration-200 ease-in-out ${bubbleClass}`}>
@@ -63,18 +65,20 @@ const MessageBubble = ({ message, isCurrentUser }) => {
  * @param {string} [currentUserName='You'] - The name of the local user.
  * @param {Array<Object>} [initialMessages=[]] - The conversation history.
  */
-function ChatWindow({ user, currentUserName = mockCurrentUserName, initialMessages = [] }) {
+function ChatWindow(chat) {
   
   // Uses initialMessages from props, updates state when a new user is selected
-  const [messages, setMessages] = useState(initialMessages.length > 0 ? initialMessages : [mockMessageExample]); 
+  const [messages, setMessages] = useState(chat.messages); 
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  const { user } = useUser();
+  const chattingUser = getChattingUser(chat, user);
 
   // Crucial: Update state when initialMessages (from a new user selection) changes
   useEffect(() => {
-    setMessages(initialMessages);
-  }, [initialMessages]); 
+    setMessages(chat.messages);
+  }, [chat.messages]); 
   
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -90,7 +94,7 @@ function ChatWindow({ user, currentUserName = mockCurrentUserName, initialMessag
 
     const newMessage = {
       id: Date.now(),
-      user: currentUserName,
+      sender: user.id,
       text: inputMessage.trim(),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
@@ -117,7 +121,7 @@ function ChatWindow({ user, currentUserName = mockCurrentUserName, initialMessag
       <header className="p-4 border-b border-gray-800 flex items-center flex-shrink-0">
         <div className="flex-shrink-0 mr-3">
           <div className="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center text-gray-900 font-extrabold text-xl shadow-md shadow-rose-700/50">
-            {user.name.charAt(0)}
+            {chat.part}
           </div>
         </div>
         <div className="flex-grow">
@@ -126,7 +130,7 @@ function ChatWindow({ user, currentUserName = mockCurrentUserName, initialMessag
                 <TypingIndicator userName={user.name} />
             ) : (
                 <>
-                  <h2 className="text-lg font-extrabold text-white truncate font-mono">{user.name}</h2>
+                  <h2 className="text-lg font-extrabold text-white truncate font-mono">{chattingUser.name}</h2>
                   <p className="text-sm text-fuchsia-500 dark:text-fuchsia-400 font-mono flex items-center">
                     <span className="relative flex h-2 w-2 mr-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-75"></span>
@@ -148,7 +152,7 @@ function ChatWindow({ user, currentUserName = mockCurrentUserName, initialMessag
           <MessageBubble
             key={message.id || index}
             message={message}
-            isCurrentUser={message.user === currentUserName}
+            isCurrentUser={message.sender === user.id}
           />
         ))}
         <div ref={messagesEndRef} />

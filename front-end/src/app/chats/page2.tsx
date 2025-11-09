@@ -2,8 +2,9 @@
 "use client";
 import React, { useState, useMemo } from 'react';
 // Note: We import mockConversations and ChatListColumn as separate named exports
-import { ChatListColumn, mockChats, mockConversations } from './components/ChatListColumn'; 
-import ChatWindow from './components/ChatWindow'; 
+import { ChatListColumn, mockChats, mockConversations } from '@/components/ChatListColumn'; 
+import ChatWindow from '@/components/ChatWindow'; 
+import { useChats } from '@/app/context/ChatContext';
 
 
 // Define types for TypeScript safety
@@ -35,21 +36,21 @@ const typedMockConversations = mockConversations as ConversationsMap;
  * The main component to manage state and layout for the combined chat interface.
  */
 function CombinedChatApp() {
-  const [activeChatId, setActiveChatId] = useState(mockChats[0].id);
+  const [activeChatId, setActiveChatId] = useState<null | string>(null);
   const [isListView, setIsListView] = useState(true);
+  const { chats } = useChats();
+  
 
-  const handleSelectChat = (id: number) => {
+  const handleSelectChat = (id: string) => {
     setActiveChatId(id);
     setIsListView(false); 
   };
-  
-  const activeChat = useMemo(() => chatMap[activeChatId], [activeChatId]);
-  
-  // LOOKUP: Get the message history for the active chat
-  const activeMessages = useMemo(() => {
-      // Use the safely typed constant for indexing
-      return typedMockConversations[activeChatId] || []; 
-  }, [activeChatId]);
+    
+//   // LOOKUP: Get the message history for the active chat
+//   const activeMessages = useMemo(() => {
+//       // Use the safely typed constant for indexing
+//       return typedMockConversations[activeChatId] || []; 
+//   }, [activeChatId]);
 
 
   return (
@@ -72,7 +73,7 @@ function CombinedChatApp() {
                 `}
             >
                 <ChatListColumn 
-                    chats={mockChats} 
+                    chats={chats} 
                     activeChatId={activeChatId} 
                     onSelectChat={handleSelectChat} 
                 />
@@ -85,13 +86,9 @@ function CombinedChatApp() {
                     ${isListView ? 'hidden md:block' : 'w-full h-full'}
                 `}
             >
-                {activeChat ? (
+                {activeChatId ? (
                     <ChatWindow 
-                        user={{ 
-                            id: activeChat.id, 
-                            name: activeChat.user.name 
-                        }}
-                        initialMessages={activeMessages}
+                        chat={chats.filter(chat => chat.id === activeChatId)[0]}
                     />
                 ) : (
                     <div className="flex items-center justify-center w-full h-full bg-gray-900">

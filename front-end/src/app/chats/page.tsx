@@ -1,7 +1,6 @@
 'use client';
 
 import { useChats } from '@/app/context/ChatContext';
-import { Link } from 'lucide-react';
 
 export default function ChatsPage() {
   const { chats } = useChats();

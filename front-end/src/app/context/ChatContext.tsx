@@ -14,6 +14,7 @@ export type Chat = {
   id: string;
   participants: Profile[];
   messages: Message[];
+  unreadCount: number;
 };
 
 type ChatContextType = {
@@ -29,13 +30,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     {
       id: '1',
       participants: [
-        { id: 'self', name: 'You', role: 'student', subjects: [], branches: {}, availability: '' },
+        { id: '1', name: 'You', role: 'student', subjects: [], branches: {}, availability: '' },
         { id: '2', name: 'Bob', role: 'teacher', subjects: ['Physics'], branches: {}, availability: 'Weekends' },
       ],
       messages: [
         { id: 'm1', sender: 'Bob', text: 'Hey! Looking forward to our study session.', timestamp: new Date() },
         { id: 'm2', sender: 'You', text: 'Same here! Let’s plan it for tomorrow.', timestamp: new Date() },
       ],
+      unreadCount: 1
     },
   ]);
 
@@ -51,6 +53,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           timestamp: new Date(),
         },
       ],
+      unreadCount: 0
     };
     setChats((prev) => [...prev, newChat]);
     return newChat;

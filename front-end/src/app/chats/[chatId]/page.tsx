@@ -26,7 +26,7 @@ export default function ChatRoomPage() {
   if (!chat) return <div className="p-4">Chat not found</div>;
 
   const handleSend = (text: string) => {
-    addMessage(chatId, { id: user?.id || "", sender: 'me', text, timestamp: new Date() });
+    addMessage(chatId, { id: Date.now().toString(), sender: user?.id || '', text, timestamp: new Date() });
   };
 
   return (

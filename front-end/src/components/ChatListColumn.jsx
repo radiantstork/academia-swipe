@@ -1,5 +1,7 @@
 // fileName: ChatListColumn.jsx (FINAL COMPLETE CODE)
 "use client";
+import { useUser } from '@/app/context/UserContext';
+import { getChattingUser } from '@/lib/utils';
 import React from 'react';
 
 // --- MOCK CONVERSATION DATA ---
@@ -50,6 +52,10 @@ export { mockChats };
  * ChatListItem Component (Internal component)
  */
 const ChatListItem = ({ chat, isActive, onClick }) => {
+  const { user } = useUser();
+  
+  const chattingUser = getChattingUser(chat, user);
+  
   return (
     <div
       onClick={() => onClick(chat.id)}
@@ -68,17 +74,17 @@ const ChatListItem = ({ chat, isActive, onClick }) => {
       {/* Avatar Placeholder */}
       <div className="flex-shrink-0 mr-4">
         <div className="w-11 h-11 rounded-full bg-rose-500 flex items-center justify-center text-gray-900 font-extrabold text-xl shadow-xl shadow-rose-700/30">
-          {chat.user.name.charAt(0)}
+          {chattingUser.name}
         </div>
       </div>
 
       {/* Text Content: Name and Last Message */}
       <div className="flex-grow min-w-0 pr-2">
         <p className={`text-base truncate ${isActive ? 'text-fuchsia-400 dark:text-fuchsia-400' : 'text-gray-900 dark:text-gray-50 font-semibold'}`}>
-          {chat.user.name}
+          {chat.messages.at(-1)?.sender || 'no one'}
         </p>
         <p className="text-sm text-gray-500 truncate dark:text-gray-400 font-mono">
-          {chat.lastMessage}
+          {chat.messages.at(-1)?.text || 'hello'}
         </p>
       </div>
 

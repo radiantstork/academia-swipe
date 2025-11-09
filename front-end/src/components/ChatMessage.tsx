@@ -1,9 +1,11 @@
 'use client';
 
+import { useUser } from '@/app/context/UserContext';
 import clsx from 'clsx';
 
 export default function ChatMessage({ message }: { message: any }) {
-  const isUser = message.sender === 'me';
+  const { user } = useUser();
+  const isUser = message.sender === user?.id;
   return (
     <div
       className={clsx(
