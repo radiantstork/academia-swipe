@@ -161,7 +161,7 @@ export default function StudentProfile() {
               </div>
             </div>
             <h1 className="text-5xl sm:text-6xl font-black text-black mb-3">
-              Student Profile
+              Your Profile
             </h1>
             <p className="text-xl text-gray-700 font-medium">
               {currentUser 

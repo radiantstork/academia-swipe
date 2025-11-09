@@ -16,6 +16,10 @@ export default function ChatRoomPage() {
   const { user } = useUser();
 
   const chat = chats.find((c) => c.id === chatId);
+  console.log(chat);
+  console.log(chats);
+  
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isOnline] = useState(true); // In a real app, this would be determined by the user's status
 

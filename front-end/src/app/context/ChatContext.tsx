@@ -35,7 +35,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       ],
       messages: [
         { id: 'm1', sender: 'Bob', text: 'Hey! Looking forward to our study session.', timestamp: new Date() },
-        { id: 'm2', sender: 'You', text: 'Same here! Let’s plan it for tomorrow.', timestamp: new Date() },
       ],
       unreadCount: 1
     },

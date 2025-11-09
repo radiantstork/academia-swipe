@@ -3,9 +3,10 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export interface User {
-  id: string;
+  id?: string;
   username: string;
   email: string;
+  password: string
 }
 
 interface UserContextType {

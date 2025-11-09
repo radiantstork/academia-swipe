@@ -102,8 +102,9 @@ export default function LoginPage() {
     setIsSubmitting(true);
     setTimeout(() => {
       const user = findUser(email, password);
+      console.log(user);
       if (user) {
-        login({id: user.id, username: user.username, email: user.email });
+        login({id: user.id, username: user.username, email: user.email, password: password });
         setIsSubmitting(false);
         router.push("/profile");
       } else {

@@ -1,12 +1,16 @@
+'use client'
+
 import Link from 'next/link';
 import { Users, Globe, BookOpen, Zap, ArrowRight } from 'lucide-react';
+import { useUser } from './context/UserContext';
 
 export default function Home() {
+  const { user } = useUser();
   return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
         {/* Navigation */}
         <nav className="container mx-auto px-6 py-6 flex items-center">
-          <div className="flex space-x-4 ml-auto">
+          {/* {!user && <div className="flex space-x-4 ml-auto">
             <Link
                 href="/login"
                 className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition transform hover:scale-105"
@@ -19,7 +23,7 @@ export default function Home() {
             >
               Register
             </Link>
-          </div>
+          </div>} */}
         </nav>
 
         {/* Hero Section */}

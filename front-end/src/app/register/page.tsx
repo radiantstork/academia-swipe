@@ -141,7 +141,7 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     setTimeout(() => {
       saveUser({ username, email, password, createdAt: new Date().toISOString(), id: Date.now().toString() });
-      login({ username, email, id: Date.now().toString()});
+      login({ username, email, password: password});
       setIsSubmitting(false);
       router.push("/profile");
     }, 1000);
