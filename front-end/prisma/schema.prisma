@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------------------
+// The Models (Your Tables)
+// ------------------------------------------------------------------
+
+model User {
+  user_id       Int       @id @default(autoincrement())
+  email         String    @unique
+  username      String    @unique
+  password_hash String
+  join_date     DateTime  @default(now())
+  birthday      DateTime? @db.Date // Use @db.Date for PostgreSQL DATE type
+  gender        String?
+  description   String?   @db.Text
+  workplace     String?
+  interests     String[]  // Prisma automatically uses PostgreSQL TEXT[] (Array)
+  certifications String[]
+  languages     String[]
+
+  // Relationships (Prisma uses these to track connections)
+  matchesAsFst Match[] @relation("FstUser")
+  matchesAsSnd Match[] @relation("SndUser")
+  messages     Message[]
+  commentsMade Comment[] @relation("Commenter")
+  commentsRec  Comment[] @relation("Receiver")
+
+  @@map("user") // Maps the Model name 'User' to the table name 'user' in Postgres
+}
+
+model Match {
+  match_id  Int      @id @default(autoincrement())
+  fst_user_id Int
+  snd_user_id Int
+  date      DateTime @default(now())
+  status    String   @default("active")
+
+  // Constraint to prevent duplicate matches (User A, User B is the same as User B, User A)
+  @@unique([fst_user_id, snd_user_id], name: "unique_match_pair")
+
+  // Foreign Keys (FKs)
+  fstUser   User   @relation("FstUser", fields: [fst_user_id], references: [user_id])
+  sndUser   User   @relation("SndUser", fields: [snd_user_id], references: [user_id])
+
+  chat Chat? // One-to-one relationship with Chat
+  
+  @@map("match")
+}
+
+model Chat {
+  chat_id  Int  @id @default(autoincrement())
+  match_id Int  @unique // unique constraint enforces the one-to-one relationship
+  
+  match Match @relation(fields: [match_id], references: [match_id])
+  messages Message[]
+
+  @@map("chat")
+}
+
+model Message {
+  chat_id Int
+  user_id Int
+  date    DateTime @default(now())
+  content String   @db.Text
+
+  // Composite Primary Key (PK/FK/PK)
+  @@id([chat_id, user_id, date])
+
+  // Foreign Keys (FKs)
+  chat Chat @relation(fields: [chat_id], references: [chat_id])
+  user User @relation(fields: [user_id], references: [user_id])
+  
+  @@map("message")
+}
+
+model Comment {
+  commenter_id Int
+  receiver_id  Int
+  date         DateTime @default(now())
+  content      String   @db.Text
+
+  // Composite Primary Key (PK/FK/PK)
+  @@id([commenter_id, receiver_id, date])
+
+  // Foreign Keys (FKs)
+  commenter User @relation("Commenter", fields: [commenter_id], references: [user_id])
+  receiver  User @relation("Receiver", fields: [receiver_id], references: [user_id])
+  
+  @@map("comment")
+}

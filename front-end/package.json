@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prisma:migrate": "dotenv -e .env.local -- npx prisma migrate dev",
+    "prisma:generate": "dotenv -e .env.local -- npx prisma generate"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.8",
@@ -16,23 +18,24 @@
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.553.0",
     "next": "16.0.1",
-    "lucide-react": "^0.553.0",
-    "next": "16.0.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@prisma/client": "^6.19.0",
     "@tailwindcss/cli": "^4.1.17",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.21",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "postcss": "^8.5.6",
+    "prisma": "^6.19.0",
     "tailwindcss": "^4.1.17",
     "typescript": "^5"
   }
